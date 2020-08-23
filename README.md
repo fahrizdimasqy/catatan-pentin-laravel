@@ -51,7 +51,9 @@ menuliskan kode SQL secara langsung, akan tetapi langsung menggunakan method baw
 seperti, find, findOrFail, create, update, dll. Dan ORM bawaan yang dipakai oleh Laravel adalah Eloquent.
 
 ### Membuat Model
-```php artisan make:model NamaModel```
+```bash
+php artisan make:model NamaModel
+```
 
 > Kesepakatan (Konvensi) dalam penulisan model adalah bentuk tunggal dan menggunakan
 CamelCase dengan kapital di awal, misalnya Product, ProductItem, dll. Setiap model tersebut akan
