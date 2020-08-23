@@ -44,7 +44,7 @@ Route::get("/hello", "NamaController@namaMethod");
 Route::get("/hello", "WelcomeController@beriSalam");
 ```
 
-## Pengenalan method
+## Pengenalan Model
 Model bertugas untuk query ke database, insert data baru, update, atau hapus record di database. Semua itu
 dilakukan dengan ORM (Object Relational Mapping) sehingga pada banyak kasus, kita tidak perlu
 menuliskan kode SQL secara langsung, akan tetapi langsung menggunakan method bawaan dari ORM
