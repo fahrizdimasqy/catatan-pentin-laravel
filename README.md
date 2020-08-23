@@ -78,3 +78,8 @@ php artisan make:controller ProductController
 > Kesepakatan penamaan controller adalah dengan StudlyCaps dan memberikan akhiran Controller
 pada nama filenya. Misalnya ProductController, UserController, ProductItemController
 dll.
+
+## Pengenalan View
+View bertanggungjawab untuk memberikan tampilan ke user. Jika kita ingin meletakkan kode html, css dan
+javascript di view lah tempatnya. Laravel membuat view lebih powerful dengan memanfaatkan templating
+engine.
