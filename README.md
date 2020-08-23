@@ -60,3 +60,21 @@ CamelCase dengan kapital di awal, misalnya Product, ProductItem, dll. Setiap mod
 merepresentasikan tabel dengan nama jamak. Dengan demikian model Product yang sudah kita
 generate merepresentasikan tabel products pada database. Kesepakatan tersebut bisa kita ubah,
 pembahasannya akan kita pelajari bersama di bab Model & Eloquent.
+
+## Pengenalan Controller
+Kemudian kita belajar bahwa selain anonymous function sebagai callback, pada aplikasi sesungguhnya kita
+akan lebih sering memberikan Controller action sebagai callback route seperti ini
+
+```php
+Route::get('/products', 'ProductController@index');
+```
+Pada definisi route di atas, ProductController merupakan nama controller sedangkan index merupakan
+action pada controller.
+
+### Membuat Controller
+```bash
+php artisan make:controller ProductController
+```
+> Kesepakatan penamaan controller adalah dengan StudlyCaps dan memberikan akhiran Controller
+pada nama filenya. Misalnya ProductController, UserController, ProductItemController
+dll.
