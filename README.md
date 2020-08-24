@@ -83,3 +83,19 @@ dll.
 View bertanggungjawab untuk memberikan tampilan ke user. Jika kita ingin meletakkan kode html, css dan
 javascript di view lah tempatnya. Laravel membuat view lebih powerful dengan memanfaatkan templating
 engine.
+
+## Route Parameter
+Ketika mengakses route tersebut, kita menginginkan
+untuk melihat produk dengan ID 20. Nah ID tersebut kan berubah-ubah sesuai dari pengguna mau melihat
+produk dengan ID berapa. Maka, ID tersebut bisa kita jadikan route param yang akan kita tangkap nilainya.
+
+```php
+Route::get("products/{id}", "ProductController@show");
+```
+Lalu pada ProductController action show kita dapat mengakses nilai $id yang diinput oleh user seperti
+ini.
+File ProductController.php
+```php
+public function show($id){
+}
+```
