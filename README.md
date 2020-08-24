@@ -99,3 +99,30 @@ File ProductController.php
 public function show($id){
 }
 ```
+Urutan parameter menentukan cara aksesnya misal:
+```php
+Route::get("/product/{product_id}", "ProductController@show");
+```
+Maka, apakah di controller action kita perlu mengubah $id menjadi $product_id. Jawabanya tidak harus, yang
+penting urutannya sama.Karena route di atas hanya memiliki 1 params, maka nama apapun di controller
+action akan merujuk ke param tersebut.
+contoh2:
+```php
+Route::get("users/{user_id}/comments/{comment_id}",
+"UserController@showComment");
+```
+Route tersebut memiliki dua params yaitu {user_id} dan {comment_id}, maka kita bisa mengaksesnya di
+UserController action showComment dalam argument. Argument pertama adalah untuk mendapatkan
+nilai user_id dan argument kedua adalah untuk mendapatkan nilai comment_id, apapun namanya.
+```php
+public function showComment($argument1, $argument2){
+/**
+* $argument1 = nilai dari param {user_id}
+* $argument2 = nilai dari param {comment_id}
+* apapun nama yang kita berikan yaa
+* yang berpengaruh adalah uruatannya.
+*/
+}
+```
+Akan tetapi agar kode kita lebih enak dibaca, sebaiknya kita samakan dengan nama route param yang kita
+definisikan, yaitu $user_id dan $comment_id.
