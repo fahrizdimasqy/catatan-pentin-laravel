@@ -126,3 +126,15 @@ public function showComment($argument1, $argument2){
 ```
 Akan tetapi agar kode kita lebih enak dibaca, sebaiknya kita samakan dengan nama route param yang kita
 definisikan, yaitu $user_id dan $comment_id.
+
+### Optional Route Parameter
+untuk membuatnya menjadi opsional, artinya parameter tersebut boleh dikosongkan kita cukup
+tambahkan ? di belakang definisi route parameter kita.
+contoh:
+```php
+Route::get("/products/{product_id?}", "ProductController@show");
+```
+Nah, kini param {product_id} boleh dikosongkan sehingga jika kita mengakses http://toko-
+online.test/products tetap akan memanggil controller bersangkutan, tanpa error.
+
+
