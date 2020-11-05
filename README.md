@@ -1036,3 +1036,172 @@ memanggil method delete seperti in
 ```php
 $product->delete();
 ```
+### Soft Deletes ###
+Soft delete merupakan sebuah cara untuk menghapus sebuah record tanpa langsung menghapusnya dari
+database. Dengan kata lain sebetulnya data yang disoft delete masih ada di record tabel, akan tetapi column
+deleted_at di record tertentu akan diisi sebuah nilai yaitu timestamp kapan model tersebut dihapus.
+Jika column deleted_at tidak null alias ada isiannya, maka model tersebut statusnya adalah sedang
+dihapus.
+
+Jika kita ingin menggunakan fitur soft deletes, pertama kita harus buat sebuah column di tabel kita bernama
+deleted_at, jika kita menggunakan file Migration kita bisa membuat field tersebut dengan memanggil
+method softDeletes()dari Schema Builder (lihat kembali bahasan Migration).
+Kemudian kita harus menggunakan trait Illuminate\Database\Eloquent\SoftDeletes pada model
+yang ingin kita aktifkan soft delete. Sehingga model kita akan tampak seperti ini
+
+```php
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+// PERHATIKAN INI!
+use Illuminate\Database\Eloquent\SoftDeletes;
+class Category extends Model
+{
+  // DAN INI
+  use SoftDeletes;
+}
+```
+Jika tanpa menggunakan soft delete, ketika kita memanggil delete() atau destroy() maka record yang
+kita pilih akan langsung dihapus dari tabel. Sedangkan jika menggunakan soft delete tidak seperti itu. Saat
+kita mengaktifkan soft delete maka ingat, kita memiliki column deleted_at pada tabel, column ini defaultnya
+bernilai NULL. Dan NULL berarti record tersebut dalam kondisi tidak dihapus, kemudian saat kita memanggil
+method delete() atau destroy() maka record yang kita pilih memiliki nilai pada column deleted_at,
+artinya column deleted_at tidak lagi bernilai NULL, sehingga kini record-record tersebut statusnya soft
+deleted (dihapus), tetapi tetap tersimpan di tabel. Jika kita query menggunakan eloquent, record-record ini
+tidak akan muncul karena dianggap telah dihapus.
+
+### trashed()###
+Method trashed() digunakan untuk mengecek apakah sebuah model dalam kondisi di tempat sampah
+alias soft deleted. Seperti ini:
+```php
+$product = App\Product::findOrFail(23);
+if($product->trashed()){
+// ya product sedang berada di tempat sampah / soft deleted
+}
+```
+
+Penjelasan kode: Melakukan pengecekkan apakah record di tabel products dengan ID 23 sedang di tong
+sampah. Method trashed() mengembalikan nilai Boolean, true jika model tersebut soft deleted dan
+false jika model tersebut dalam kondisi tidak disoft deleted.
+
+### restore() ###
+Method restore() kita gunakan untuk mengembalikan model yang sebelumnya berada di tong sampah /
+soft deleted agar kembali aktif atau tidak soft deleted. Melanjutkan contoh kode sebelumnya, kita ingin
+merestore product dengan id tertentu apabila statusnya sekarang soft deleted, maka kita lakukan seperti
+ini:
+
+```php
+// cari produk di tabel products dengan ID == 23
+// jika gagal lempar error 404
+$product = App\Product::findOrFail(23);
+// jika ketemu dan statusnya soft deleted (trashed)
+// restore
+if($product->trashed()){
+	$product->restore();
+}
+```
+Penjelasan kode: Dapatkan model products dengan id 23, kemudian cek menggunakan method trashed()
+apakah sedang berada di tong sampah / soft deleted, jika iya maka restore model tersebut.
+
+### withTrashed() ###
+Kami tadi menjelaskan bahwa ketika kita melakukan query terhadap model yang mengaktifkan soft delete,
+maka semua record yang berstatus soft deleted tidak ikut terquery. Tetapi terkadang kita ingin menquery
+keduanya, baik soft deleted atau tidak. Maka, untuk mengikutsertakan hasil dari model yang berstatus soft
+deleted kita gunakan method withTrashed() pada query kita, misalnya seperti ini:
+
+```php
+$product = App\Product::where("owner", 12)->withTrashed()->get();
+```
+Penjelasan kode: Dapatkan record dari tabel products yang nilai column ownernya adalah 12, ikut sertakan
+juga record yang berstatus soft deleted.
+
+### onlyTrashed() ###
+onlyTrashed()
+Berbeda dengan withTrashed(), onlyTrashed() justru mengembalikan record-record yang berstatus
+soft deleted saja. Tanpa menyertakan record yang belum disoft delete.
+
+```php
+$product_trashed = App\Product::where("owner", 12)->onlyTrashed()->get();
+```
+
+### forceDelete() ###
+forceDelete() kita gunakan untuk menghapus sebuah record secara permanen meskipun kita
+menggunakan softDelete pada model yang terkait.
+
+## Data Pagination ##
+Dengan menggunakan Eloquent untuk memanipulasi data, kita jadi lebih mudah untuk melakukan paging.
+Fitur pagination bawaan Laravel mendukung baik jika kita menggunakan Query Builder atau Eloquent. Ada
+dua metode yang bisa kita gunakan untuk melakuka pagination di laravel yaitu simplePaginate() dan
+paginate().
+
+
+### simplePaginate() ###
+Method simplePaginate() memiliki sebuah parameter opsional yaitu berapa item yang ingin kita
+tampilkan per halamannya. Misalnya kita ingin menampilkan data dari tabel products per halaman 25 product,
+maka kita gunakan simplePaginate(25).
+
+```php
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+class ProductController extends Controller
+{
+public function index()
+{<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+class ProductController extends Controller
+{
+public function index()
+{
+return view("products.list",
+["products"=>\App\Product::simplePaginate(25)]);
+}
+}
+	return view("products.list", ["products"=>\App\Product::simplePaginate(25)]);
+}
+}
+```
+
+### paginate() ###
+Method paginate() bekerja seperti halnya simplePaginate() yaitu memiliki sebuah parameter opsional
+berupa jumlah item yang ingin kita tampilkan per halaman. Untuk menggunakannya cukup tuliskan
+paginate(25) misalnya.
+
+```php
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+class ProductController extends Controller
+{
+public function index()
+{
+return view("products.list",
+["products"=>\App\Product::paginate(25)]);
+}
+}
+```
+
+Perhatikan: Method simplePaginate() dan paginate()apabila tidak diberikan parameter maka default
+data per halaman adalah 15
+
+### Perbedaan ###
+Perbedaan pertama antara simplePaginate dengan paginate adalah, simplePaginate kita gunakan jika kita
+hanya ingin menampilkan tombol “next” dan “prev” tanpa perlu menampilkan informasi pagination lainnya
+seperti halaman yang aktif, jumlah halaman, halaman terakhir, dll. Menggunakan simplePaginate akan lebih
+efisien untuk data yang besar.
+Perbedaan kedua adalah, ketika kita memanggil simplePaginate() dan paginate() maka kita akan bisa
+mengakses beberapa method berkaitan dengan pagination di view kita, namun ada 2 method yang tidak
+tersedia di simplePaginate() tapi tersedia jika menggunakan paginate().
+
+### Menampilkan link pagination di view ##
+```php
+<ul>
+@foreach($products as $p)
+<li>{{$p->name}}</li>
+@endforeach
+</ul>
+{{$products->links()}}
+```
+
+
